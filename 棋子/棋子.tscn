@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://dn1gn1d6wf4ko"]
+
+[ext_resource type="Script" uid="uid://chqbq2atyywj6" path="res://棋子/棋子类.gd" id="1_lxyhb"]
+[ext_resource type="SpriteFrames" uid="uid://b5ssjpsrpeqnq" path="res://棋子/敌人/动画/弓手动画.tres" id="2_6ugyi"]
+
+[node name="棋子" type="Path2D"]
+script = ExtResource("1_lxyhb")
+"棋子形象" = ExtResource("2_6ugyi")
+"棋子形象位置偏移" = Vector2i(-2, -5)
+
+[node name="PathFollow2D" type="PathFollow2D" parent="."]
+rotates = false
+loop = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="PathFollow2D"]
+position = Vector2(-2, -5)
+sprite_frames = ExtResource("2_6ugyi")
+animation = &"未选中"
+autoplay = "未选中"
+frame_progress = 0.6282924

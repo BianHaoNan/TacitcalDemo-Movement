@@ -1,0 +1,58 @@
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://c2e1o4y0p30wq"]
+
+[ext_resource type="Texture2D" uid="uid://dbbdqd7pf6ha8" path="res://棋子/玩家/动画/Knight69x75.png" id="1_5hpha"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3aajk"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(0, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0htse"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(23, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3rrcg"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(46, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5hpha"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(0, 50, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7wn1k"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(23, 50, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cff5l"]
+atlas = ExtResource("1_5hpha")
+region = Rect2(46, 50, 23, 25)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3aajk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0htse")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3rrcg")
+}],
+"loop": true,
+"name": &"未选中",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5hpha")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7wn1k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cff5l")
+}],
+"loop": true,
+"name": &"选中",
+"speed": 5.0
+}]

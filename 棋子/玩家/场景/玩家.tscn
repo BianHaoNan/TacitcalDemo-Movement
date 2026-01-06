@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmhqlhbnu4sr6"]
+
+[ext_resource type="PackedScene" uid="uid://dn1gn1d6wf4ko" path="res://棋子/棋子.tscn" id="1_y3idl"]
+[ext_resource type="Script" uid="uid://ha0jnbd5dmbn" path="res://棋子/玩家/脚本/玩家类.gd" id="2_p30rp"]
+
+[node name="玩家" instance=ExtResource("1_y3idl")]
+script = ExtResource("2_p30rp")

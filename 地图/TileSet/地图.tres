@@ -1,0 +1,49 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dwlwvueaifmn5"]
+
+[ext_resource type="Texture2D" uid="uid://b1t3j7aw3q5td" path="res://地图/TileSet/TileSet.png" id="1_7rfmv"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6s0wu"]
+texture = ExtResource("1_7rfmv")
+6:0/0 = 0
+6:0/0/terrain_set = 0
+6:0/0/terrain = 0
+6:0/0/terrains_peering_bit/right_side = 0
+6:0/0/terrains_peering_bit/bottom_right_corner = 0
+6:0/0/terrains_peering_bit/bottom_side = 0
+6:0/0/terrains_peering_bit/bottom_left_corner = 0
+6:0/0/terrains_peering_bit/left_side = 0
+6:0/0/terrains_peering_bit/top_left_corner = 0
+6:0/0/terrains_peering_bit/top_side = 0
+6:0/0/terrains_peering_bit/top_right_corner = 0
+5:6/0 = 0
+5:6/0/terrain_set = 0
+5:6/0/terrain = 1
+5:6/0/terrains_peering_bit/right_side = 1
+5:6/0/terrains_peering_bit/bottom_right_corner = 1
+5:6/0/terrains_peering_bit/bottom_side = 1
+5:6/0/terrains_peering_bit/bottom_left_corner = 1
+5:6/0/terrains_peering_bit/left_side = 1
+5:6/0/terrains_peering_bit/top_left_corner = 1
+5:6/0/terrains_peering_bit/top_side = 1
+5:6/0/terrains_peering_bit/top_right_corner = 1
+0:13/0 = 0
+0:13/0/terrain_set = 0
+0:13/0/terrain = 2
+0:13/0/terrains_peering_bit/right_side = 2
+0:13/0/terrains_peering_bit/bottom_right_corner = 2
+0:13/0/terrains_peering_bit/bottom_side = 2
+0:13/0/terrains_peering_bit/bottom_left_corner = 2
+0:13/0/terrains_peering_bit/left_side = 2
+0:13/0/terrains_peering_bit/top_left_corner = 2
+0:13/0/terrains_peering_bit/top_side = 2
+0:13/0/terrains_peering_bit/top_right_corner = 2
+
+[resource]
+terrain_set_0/mode = 0
+terrain_set_0/terrain_0/name = " 平地"
+terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)
+terrain_set_0/terrain_1/name = "森林"
+terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
+terrain_set_0/terrain_2/name = "山地"
+terrain_set_0/terrain_2/color = Color(0.46875, 0.5, 0.25, 1)
+sources/0 = SubResource("TileSetAtlasSource_6s0wu")

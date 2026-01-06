@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://chn6l1etmhu04"]
+
+[ext_resource type="SpriteFrames" uid="uid://n23dgp64h1de" path="res://光标/动画/光标动画.tres" id="1_8rwid"]
+[ext_resource type="Script" uid="uid://c6w0t2a71qle5" path="res://光标/脚本/光标类.gd" id="1_f0hsl"]
+
+[node name="光标" type="Node2D"]
+script = ExtResource("1_f0hsl")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("1_8rwid")
+animation = &"通常"
+autoplay = "通常"

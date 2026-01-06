@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmtv36ui6716a"]
+
+[ext_resource type="TileSet" uid="uid://byfd5wifpu4lx" path="res://路径/TileSet/路径.tres" id="1_p4egv"]
+[ext_resource type="Script" uid="uid://cnfaxfp7yine7" path="res://路径/脚本/路径类.gd" id="2_50fk7"]
+
+[node name="路径" type="TileMapLayer"]
+tile_set = ExtResource("1_p4egv")
+script = ExtResource("2_50fk7")

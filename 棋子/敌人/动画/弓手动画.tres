@@ -1,0 +1,58 @@
+[gd_resource type="SpriteFrames" load_steps=8 format=3 uid="uid://b5ssjpsrpeqnq"]
+
+[ext_resource type="Texture2D" uid="uid://c6syrb001y44j" path="res://棋子/敌人/动画/Archer69x75.png" id="1_mbsey"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxyhb"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(0, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sfmhc"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(23, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ccr15"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(46, 0, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4uxa6"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(0, 50, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j1x3b"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(23, 50, 23, 25)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qqd4r"]
+atlas = ExtResource("1_mbsey")
+region = Rect2(46, 50, 23, 25)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lxyhb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sfmhc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ccr15")
+}],
+"loop": true,
+"name": &"未选中",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4uxa6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j1x3b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qqd4r")
+}],
+"loop": true,
+"name": &"选中",
+"speed": 5.0
+}]

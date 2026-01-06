@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="网格类" load_steps=2 format=3 uid="uid://5wc611am3lrg"]
+
+[ext_resource type="Script" uid="uid://cqmyykalbs6nu" path="res://自定义资源/网格类.gd" id="1_s0ruh"]
+
+[resource]
+script = ExtResource("1_s0ruh")
+metadata/_custom_type_script = "uid://cqmyykalbs6nu"

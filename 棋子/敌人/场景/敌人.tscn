@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b8p1w6t03wlmj"]
+
+[ext_resource type="PackedScene" uid="uid://dn1gn1d6wf4ko" path="res://棋子/棋子.tscn" id="1_4h0sm"]
+[ext_resource type="Script" uid="uid://de2ajmg7c1bc0" path="res://棋子/敌人/脚本/敌人类.gd" id="2_3o52l"]
+
+[node name="敌人" instance=ExtResource("1_4h0sm")]
+script = ExtResource("2_3o52l")
+
+[node name="AnimatedSprite2D" parent="PathFollow2D" index="0"]
+modulate = Color(0.85882354, 0.3137255, 0, 1)

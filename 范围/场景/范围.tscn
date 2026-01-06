@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxgdh07khcpel"]
+
+[ext_resource type="TileSet" uid="uid://ta5oc5x4vo54" path="res://范围/TileSet/范围.tres" id="1_ba82j"]
+[ext_resource type="Script" uid="uid://dfv0775endoc7" path="res://范围/脚本/范围类.gd" id="2_p3s24"]
+
+[node name="范围" type="TileMapLayer"]
+tile_set = ExtResource("1_ba82j")
+script = ExtResource("2_p3s24")
