@@ -37,6 +37,17 @@ texture = ExtResource("1_7rfmv")
 0:13/0/terrains_peering_bit/top_left_corner = 2
 0:13/0/terrains_peering_bit/top_side = 2
 0:13/0/terrains_peering_bit/top_right_corner = 2
+4:24/0 = 0
+4:24/0/terrain_set = 0
+4:24/0/terrain = 3
+4:24/0/terrains_peering_bit/right_side = 3
+4:24/0/terrains_peering_bit/bottom_right_corner = 3
+4:24/0/terrains_peering_bit/bottom_side = 3
+4:24/0/terrains_peering_bit/bottom_left_corner = 3
+4:24/0/terrains_peering_bit/left_side = 3
+4:24/0/terrains_peering_bit/top_left_corner = 3
+4:24/0/terrains_peering_bit/top_side = 3
+4:24/0/terrains_peering_bit/top_right_corner = 3
 
 [resource]
 terrain_set_0/mode = 0
@@ -46,4 +57,6 @@ terrain_set_0/terrain_1/name = "森林"
 terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 terrain_set_0/terrain_2/name = "山地"
 terrain_set_0/terrain_2/color = Color(0.46875, 0.5, 0.25, 1)
+terrain_set_0/terrain_3/name = "障碍"
+terrain_set_0/terrain_3/color = Color(0.375, 0.5, 0.25, 1)
 sources/0 = SubResource("TileSetAtlasSource_6s0wu")

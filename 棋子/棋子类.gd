@@ -15,6 +15,7 @@ signal 完成移动信号
 @export var 最小攻击距离:= 1
 @export var 最大攻击距离:= 1
 @export var 移动速度 := 100.0
+@export_enum("增益类", "伤害类") var 武器类型: String = "伤害类"
 
 @export var 棋子形象: SpriteFrames:
 	set(value):
@@ -81,6 +82,7 @@ func _process(delta: float) -> void:
 
 func 沿路径移动(路径: PackedVector2Array) -> void:
 	_路径 = 路径
+	print_debug("---------- 路径:",路径)
 	if 路径.is_empty():
 		return
 	#curve.add_point(Vector2.ZERO) # 初始向量为(0, 0)，引起“Zero length interval”报错，完成光标移动后可以注释掉

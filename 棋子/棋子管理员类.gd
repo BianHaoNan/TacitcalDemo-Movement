@@ -15,7 +15,6 @@ var _棋子阵营字典 := {}
 var _行动棋子: 棋子类
 ## 格子内通过成本，只有地形，格子坐标：消耗值=》Vector2i:int
 var _格子内移动力消耗值字典 := {}
-# 备用
 var _地形障碍位置: Array[Vector2i] = []
 
 @onready var _地图类: 地图类 = $"../地图"
@@ -33,8 +32,11 @@ var _绘制用移动范围 : Array[Vector2i] = []
 var _实际攻击范围: Array[Vector2i] = []
 var _绘制用攻击范围: Array[Vector2i] = []
 
+var _范围内终点坐标 : Vector2i 
+
 func _ready() -> void:
 	_格子内移动力消耗值字典 = _地图类.格子坐标_扩散消耗值.duplicate()
+	_地形障碍位置 = _地图类._地形障碍位置.duplicate()
 	初始化()
 
 func 初始化() -> void:
@@ -55,12 +57,240 @@ func _on_光标_点击事件信号(_格子坐标_: Variant) -> void:
 		选中棋子(_格子坐标_)
 	# 已选中单位，向鼠标点击位置cell执行移动
 	elif _行动棋子.被选中:
-		移动棋子(_路径类.范围内路径终点)
+		移动棋子(_范围内终点坐标)
 
-func _on_光标_鼠标移动信号(_格子坐标_: Variant) -> void:
+func _on_光标_鼠标移动信号(_光标所在位置_: Variant) -> void:
 	# 有选中的单位时，绘制路径
 	if _行动棋子 and _行动棋子.被选中:
-		_路径类.绘制移动路径(_行动棋子.棋子的格子坐标, _格子坐标_, _绘制用移动范围)
+		#_路径类.绘制移动路径(_行动棋子.棋子的格子坐标, _光标所在位置_, _绘制用移动范围)
+		_范围内终点坐标 = 获取范围内终点坐标(_光标所在位置_)
+		_路径类.新_绘制移动路径(_行动棋子.棋子的格子坐标, _范围内终点坐标)
+
+func 获取范围内终点坐标(_光标所在位置_ : Vector2i) -> Vector2i:
+	var 终点坐标: Vector2i
+	var 行动棋子位置: Vector2i = _行动棋子.棋子的格子坐标
+	var 目标点: Vector2i
+	# 行动棋子的移动距离是否为0
+	if _行动棋子.移动范围 == 0:
+		终点坐标 = 行动棋子位置
+		return 终点坐标
+	# 目标位置是否为起点
+	if _光标所在位置_ == 行动棋子位置:
+		终点坐标 = 行动棋子位置
+		return 终点坐标
+	# 判断目标位置是否只有地形
+	if not _棋子坐标字典.keys().has(Vector2i(_光标所在位置_)):
+		# 只有地形
+		#print_debug("判断走向： 只有地形")
+		目标点 = _光标所在位置_
+		终点坐标 = 接近目标(目标点)
+		return 终点坐标
+	else:
+		# 并非只有地形，则判断行动棋子的攻击距离
+		if _行动棋子.最小攻击距离 == 0 and _行动棋子.最大攻击距离 == 0:
+			# 以接近目标位置为目的获取终点坐标
+			#print_debug("判断走向： 攻击距离 == 0")
+			目标点 = _光标所在位置_
+			终点坐标 = 接近目标(目标点)
+			return 终点坐标
+		else:
+			# 攻击距离不为零，判断占用该位置的是否为友方
+			# 判断行动棋子的武器是增益类还是伤害类
+			var 是友方 = 判断位置是否被占用(_光标所在位置_, "友方")
+			var 武器类型 = _行动棋子.武器类型
+			#print_debug("判断走向： 是否友方： ",是友方," -- 武器类型: ",武器类型)
+			match [是友方, 武器类型]:
+				[true, "增益类"]:
+					# 以将目标放入攻击范围为目的获取终点坐标
+					目标点 = 将目标放入攻击范围(_光标所在位置_)
+					终点坐标 = 接近目标(目标点)
+					return 终点坐标
+				[true, "伤害类"]:
+					# 以接近目标位置为目的获取终点坐标
+					目标点 = _光标所在位置_
+					终点坐标 = 接近目标(目标点)
+					return 终点坐标
+				[false, "增益类"]:
+					# 以接近目标位置为目的获取终点坐标
+					目标点 = _光标所在位置_
+					终点坐标 = 接近目标(目标点)
+					return 终点坐标
+				[false, "伤害类"]:
+					# 以将目标放入攻击范围为目的获取终点坐标
+					目标点 = 将目标放入攻击范围(_光标所在位置_)
+					终点坐标 = 接近目标(目标点)
+					return 终点坐标
+				_:
+					print_debug("其他武器类")
+	return 终点坐标
+
+## 进入目的、靠近目的
+func 接近目标(目标坐标: Vector2i) -> Vector2i:
+	var 起点坐标 = _行动棋子.棋子的格子坐标
+	var 可进入位置集 : Array[Vector2i]= _实际移动范围.duplicate()
+	var 绘制用移动范围集 : Array[Vector2i] = _绘制用移动范围.duplicate()
+	var 是否需要进入中心点 := false
+	if 可进入位置集.has(目标坐标):
+		return 目标坐标
+	var 中心点: Vector2i
+	var 起点与目标的距离: int = abs(起点坐标.x - 目标坐标.x) + abs(起点坐标.y - 目标坐标.y)
+	if 绘制用移动范围集.has(目标坐标) or 起点与目标的距离 <= _行动棋子.移动范围: # 目的地在移动范围内,但该位置不可进入,检索最靠近的位置; 起点与目标距离小于移动距离是, 也要以目标坐标为中心寻找邻居点
+		中心点 = 目标坐标
+	else: # 目的地不在移动范围内,获取范围内全图路径终点,然后检索最佳位置。
+		中心点 = _路径类.获取全图路径在范围内的终点(起点坐标, 目标坐标, 绘制用移动范围集)
+		是否需要进入中心点 = true
+	return 检索最佳位置(中心点, 目标坐标, 可进入位置集, 是否需要进入中心点)
+
+## 遍历中心点邻居点，一层一层向外扩散，在层中寻找一个距离目标坐标最近且位于_可进入位置集_的位置
+func 检索最佳位置(中心点 : Vector2i, 目标坐标: Vector2i,_可进入位置集_ : Array[Vector2i], 是否需要进入中心点: bool = false) -> Vector2i:
+	var 队列: Array[Vector2i] = [中心点]
+	var 距离: int = 0
+	while not 距离 == _行动棋子.移动范围 :
+		距离 += 1
+		var 本层大小 = 队列.size()
+		var 本层候选: Array[Vector2i]
+		if 是否需要进入中心点 and _可进入位置集_.has(中心点):
+			本层候选.append(中心点)
+		if 本层候选.is_empty():
+			for i in range(本层大小):
+				var 当前 = 队列.pop_front()
+				for j in 天意四向诀:
+					var 邻居 = 当前 + j
+					if not 队列.has(邻居) and _网格类.判断格子是否在网格地图内(邻居):
+						队列.append(邻居)
+						# 如果这个邻居是可进入的，加入本层候选
+						if _可进入位置集_.has(邻居):
+							本层候选.append(邻居)
+		# 如果本层候选有格子，选曼哈顿距离最短的并返回
+		if not 本层候选.is_empty(): # 因为"可进入位置集"包含起点位置,所以理论上本层候选不会为空
+			var 最佳位置 = 本层候选[0]
+			var 最小成本 = 999
+			for i in 本层候选:
+				var 成本 = abs(i.x - 目标坐标.x) + abs(i.y - 目标坐标.y)
+				if 成本 < 最小成本:
+					最小成本 = 成本
+					最佳位置 = i
+			return 最佳位置
+	print_debug("检索最佳位置 循环内未检索到最佳位置,发生了甚么? - 目标坐标 : ", 目标坐标)
+	return _行动棋子.棋子的格子坐标
+
+func 将目标放入攻击范围(目标坐标: Vector2i) -> Vector2i:
+	var 交集: Array[Vector2i] = []
+	var 起点坐标 = _行动棋子.棋子的格子坐标
+	var 最小攻击距离 = _行动棋子.最小攻击距离
+	var 最大攻击距离 = _行动棋子.最大攻击距离
+	_路径类.获取全图路径在范围内的终点(起点坐标, 目标坐标, _绘制用移动范围.duplicate())
+	var 前往终点的全图路径: PackedVector2Array = _路径类.全图路径
+	var 起点到目标的距离 = abs(目标坐标.x - 起点坐标.x) + abs(目标坐标.y - 起点坐标.y)
+	var 路经点到目标的距离: int
+	var 可攻击位置: Array[Vector2i]
+	if 起点到目标的距离 > 最大攻击距离:
+		for i in 前往终点的全图路径:
+			路经点到目标的距离 = abs(目标坐标.x - i.x) + abs(目标坐标.y - i.y)
+			if 路经点到目标的距离 >= 最小攻击距离 and 路经点到目标的距离 <= 最大攻击距离:
+				交集.append(Vector2i(i))
+	elif 起点到目标的距离 < 最小攻击距离:
+		var 延伸路径向量: Vector2i
+		if 前往终点的全图路径.size() < 2:
+			延伸路径向量 = 起点坐标 - 目标坐标
+		else :
+			延伸路径向量 = Vector2i(前往终点的全图路径[0]) - Vector2i(前往终点的全图路径[1])
+		var 延伸路径点: Vector2i = Vector2i(前往终点的全图路径[0])
+		路经点到目标的距离 = 起点到目标的距离
+		while 路经点到目标的距离 <= 最大攻击距离:
+			延伸路径点 += 延伸路径向量
+			if not _网格类.判断格子是否在网格地图内(延伸路径点):
+				break
+			路经点到目标的距离 = abs(目标坐标.x - 延伸路径点.x) + abs(目标坐标.y - 延伸路径点.y)
+			if 路经点到目标的距离 >= 最小攻击距离 and 路经点到目标的距离 <= 最大攻击距离:
+				交集.append(延伸路径点)
+	else :
+		return 起点坐标
+	if 交集.is_empty(): # 反向延伸路线未与可攻击位置有交集时就撞上边界
+		for i in 获取攻击层(目标坐标).values():
+			for j in i:
+				if not j in _地形障碍位置 and not j in _棋子坐标字典.keys():
+					可攻击位置.append(Vector2i(j))
+		# 从起点邻居中检索到目的地
+		return 检索最佳攻击位置(起点坐标, 起点坐标, 可攻击位置)
+	var 可进入位置: Array[Vector2i] = []
+	for i in 交集:
+		if not i in _地形障碍位置 and not i in _棋子坐标字典.keys():
+			可进入位置.append(i)
+	if not 可进入位置.is_empty():
+		# 取交集中距离起点最近的作为目的地
+		return 获取最近距离点(可进入位置, 目标坐标)
+	# 交集内无可进入位置,取交集中距离起点最近的,从其邻居中检索到目的地
+	var 适合的交集点: Vector2i = 获取最近距离点(交集, 目标坐标)
+	for i in 获取攻击层(目标坐标).values():
+		for j in i:
+			if not j in _地形障碍位置 and not j in _棋子坐标字典.keys():
+				可攻击位置.append(Vector2i(j))
+	return 检索最佳攻击位置(适合的交集点, 起点坐标, 可攻击位置)
+
+## 围绕目标坐标从邻居点中找到与起点坐标最近的位置
+func 检索最佳攻击位置(目标坐标 : Vector2i, 起点坐标: Vector2i,_可进入位置集_ : Array[Vector2i]) -> Vector2i:
+	var 队列: Array[Vector2i] = [目标坐标]
+	var 遍历次数: int = _行动棋子.最大攻击距离 * 2
+	while 遍历次数 > 0:
+		遍历次数 -= 1
+		var 本层大小 = 队列.size()
+		var 本层候选: Array[Vector2i]
+		for i in range(本层大小):
+			var 当前 = 队列.pop_front()
+			for j in 天意四向诀:
+				var 邻居 = 当前 + j
+				if not 队列.has(邻居) and _网格类.判断格子是否在网格地图内(邻居):
+					队列.append(邻居)
+					# 如果这个邻居是可进入的，加入本层候选
+					if _可进入位置集_.has(邻居):
+						本层候选.append(邻居)
+		# 如果本层候选有格子，选曼哈顿距离最短的并返回
+		if not 本层候选.is_empty(): # 因为"可进入位置集"包含起点位置,所以理论上本层候选不会为空
+			var 最佳位置 = 本层候选[0]
+			var 最小成本 = 999
+			for i in 本层候选:
+				var 成本 = abs(i.x - 起点坐标.x) + abs(i.y - 起点坐标.y)
+				if 成本 < 最小成本:
+					最小成本 = 成本
+					最佳位置 = i
+			return 最佳位置
+	# 无可用的攻击位置
+	return _行动棋子.棋子的格子坐标
+
+func 获取最近距离点(坐标集: Array[Vector2i], 目标坐标: Vector2i) -> Vector2i:
+	var 最近的点 : Vector2i = 坐标集[0]
+	var 最近距离 : int = abs(目标坐标.x - 坐标集[0].x) + abs(目标坐标.y - 坐标集[0].y)
+	for i in 坐标集:
+		var x = abs(目标坐标.x - i.x) + abs(目标坐标.y - i.y)
+		if x < 最近距离:
+			最近距离 = x
+			最近的点 = i
+	return 最近的点
+
+## 围绕目标点的可攻击位置字典,层数:坐标集 -> int:Array[Vector2i]
+func 获取攻击层(中心点: Vector2i) -> Dictionary:
+	var 攻击层字典: Dictionary
+	var 最小攻击距离 = _行动棋子.最小攻击距离
+	var 最大攻击距离 = _行动棋子.最大攻击距离
+	var 坐标集: Array[Vector2i]
+	var 可攻击位置: Vector2i
+	var 层数: int = 1
+	for i in range(最小攻击距离, 最大攻击距离 + 1):
+		坐标集 = []
+		for x in range(-i, i + 1):
+			var y = i - abs(x)
+			可攻击位置 = 中心点 + Vector2i(x,y)
+			if _网格类.判断格子是否在网格地图内(可攻击位置):
+				坐标集.append(可攻击位置)
+			if y != 0:
+				可攻击位置 = 中心点 + Vector2i(x,-y)
+				if _网格类.判断格子是否在网格地图内(可攻击位置):
+					坐标集.append(可攻击位置)
+		if not 坐标集.is_empty():
+			攻击层字典[层数] = 坐标集
+			层数 += 1
+	return 攻击层字典
 
 ## 取消按键事件
 func _unhandled_input(event: InputEvent) -> void:
@@ -89,8 +319,11 @@ func 选中棋子(_光标所在位置_: Vector2i) -> void:
 	_范围类.绘制攻击范围(_绘制用攻击范围.duplicate())
 	#print_debug("实际攻击范围 ： ", _实际攻击范围)
 	#print_debug("绘制用攻击范围 ： ", _绘制用攻击范围)
-	
-	_路径类.初始化AStarGrid2D(_绘制用移动范围, _地形障碍位置, _绘制用攻击范围)
+	var 障碍位置集: Array[Vector2i] = _地形障碍位置.duplicate()
+	for i in _棋子坐标字典.keys():
+		if 判断位置是否被占用(i, "非友方"):
+			障碍位置集.append(i)
+	_路径类.初始化AStarGrid2D(_绘制用移动范围, 障碍位置集, _绘制用攻击范围)
 
 func 移动棋子(_目标位置_: Vector2i) -> void:
 	# 被占用、移动范围外的位置不能移入
@@ -110,7 +343,9 @@ func 获取实际移动范围(_填充结果字典_: Dictionary) -> Array[Vector2
 	return _填充结果字典_["实际移动范围"]
 func 获取绘制用移动范围(_填充结果字典_: Dictionary) -> Array[Vector2i]:
 	var 坐标集:Array[Vector2i] = _填充结果字典_["实际移动范围"]
-	坐标集.append_array(_填充结果字典_["范围内友方棋子位置"])
+	var 友方棋子位置:Array[Vector2i] = _填充结果字典_["范围内友方棋子位置"]
+	友方棋子位置.erase(_行动棋子.棋子的格子坐标)
+	坐标集.append_array(友方棋子位置)
 	return 坐标集
 func 获取绘制用攻击范围(_绘制用移动范围_:Array[Vector2i], _实际攻击范围_:Array[Vector2i]) -> Array[Vector2i]:
 	for i in _绘制用移动范围_:
@@ -193,7 +428,7 @@ func 获取完整攻击范围(_棋子类_: 棋子类, _实际移动范围_: Arra
 	for i in 中转.keys():
 		实际攻击范围.append(Vector2i(i))
 	return 实际攻击范围
-	
+
 func 判断位置是否被占用(_目标位置_: Vector2i, _type: String = "") -> bool:
 	var out: bool
 	match _type:

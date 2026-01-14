@@ -5,6 +5,7 @@
 
 [node name="棋子" type="Path2D"]
 script = ExtResource("1_lxyhb")
+"武器类型" = "伤害类"
 "棋子形象" = ExtResource("2_6ugyi")
 "棋子形象位置偏移" = Vector2i(-2, -5)
 
@@ -17,4 +18,4 @@ position = Vector2(-2, -5)
 sprite_frames = ExtResource("2_6ugyi")
 animation = &"未选中"
 autoplay = "未选中"
-frame_progress = 0.6282924
+frame_progress = 0.017555669
